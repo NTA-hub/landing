@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>나이트버스 — 막차 이후도 집까지</title>
+  <style>
+    :root {
+      --navy: #0a0e1a;
+      --navy-mid: #111827;
+      --navy-light: #1e2a3a;
+      --accent: #4f8ef7;
+      --accent-glow: #6aa3ff;
+      --purple: #8b5cf6;
+      --teal: #14b8a6;
+      --text: #e8edf5;
+      --text-dim: #8899b0;
+      --card-bg: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.08);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--navy);
+      color: var(--text);
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── STARS BACKGROUND ── */
+    .stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .stars::before, .stars::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 40% 10%, rgba(255,255,255,0.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 55% 55%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 20%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 80% 70%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 30%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 15% 75%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 35% 85%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 60% 90%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 5% 50%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 95% 60%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 45% 35%, rgba(255,255,255,0.8) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 72% 45%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 20% 60%, rgba(255,255,255,0.7) 0%, transparent 100%);
+    }
+    .stars::after {
+      background-image:
+        radial-gradient(1px 1px at 8% 25%, rgba(200,220,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 65%, rgba(200,220,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 50% 5%, rgba(200,220,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 65% 75%, rgba(200,220,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 85% 15%, rgba(200,220,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 92% 88%, rgba(200,220,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 3% 92%, rgba(200,220,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 48% 70%, rgba(200,220,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 77% 55%, rgba(200,220,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 22% 30%, rgba(200,220,255,0.6) 0%, transparent 100%);
+    }
+
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 48px;
+      background: rgba(10,14,26,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 32px;
+    }
+    nav ul a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    nav ul a:hover { color: var(--text); }
+
+    .nav-cta {
+      background: var(--accent);
+      color: #fff !important;
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: background 0.2s, transform 0.15s !important;
+    }
+    .nav-cta:hover { background: var(--accent-glow) !important; transform: translateY(-1px); }
+
+    /* ── SECTIONS ── */
+    section, header { position: relative; z-index: 1; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(79,142,247,0.12);
+      border: 1px solid rgba(79,142,247,0.3);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 28px;
+      letter-spacing: 0.04em;
+    }
+    .badge-dot {
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.4); }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      font-weight: 900;
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+      max-width: 800px;
+    }
+    .hero h1 .highlight {
+      background: linear-gradient(90deg, var(--accent), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: var(--text-dim);
+      max-width: 560px;
+      margin-bottom: 48px;
+      line-height: 1.75;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      color: #fff;
+      padding: 16px 36px;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 8px 32px rgba(79,142,247,0.35);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(79,142,247,0.5);
+    }
+
+    .btn-secondary {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 16px 36px;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.08);
+      transform: translateY(-2px);
+    }
+
+    /* ── CITY ILLUSTRATION ── */
+    .city-wrap {
+      position: relative;
+      margin-top: 72px;
+      width: 100%;
+      max-width: 860px;
+    }
+    .city-glow {
+      position: absolute;
+      bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 80%;
+      height: 160px;
+      background: radial-gradient(ellipse, rgba(79,142,247,0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .city-svg {
+      width: 100%;
+      display: block;
+    }
+
+    /* ── STAT BAR ── */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--card-bg);
+    }
+    .stat {
+      flex: 1;
+      min-width: 160px;
+      padding: 32px 24px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-num {
+      font-size: 2.2rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      background: linear-gradient(90deg, var(--accent), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    /* ── SECTION COMMON ── */
+    .section {
+      padding: 96px 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section-tag {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .section-title {
+      font-size: clamp(1.7rem, 4vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 1.05rem;
+      color: var(--text-dim);
+      max-width: 560px;
+      line-height: 1.75;
+    }
+
+    /* ── PROBLEM ── */
+    .problem-bg {
+      background: var(--navy-mid);
+    }
+    .problem-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .tl-item {
+      display: flex;
+      gap: 20px;
+      position: relative;
+    }
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: 19px; top: 44px;
+      width: 2px;
+      height: calc(100% - 12px);
+      background: var(--border);
+    }
+    .tl-item:last-child::before { display: none; }
+    .tl-dot {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .tl-dot.last-bus { background: rgba(239,68,68,0.15); border: 2px solid rgba(239,68,68,0.4); }
+    .tl-dot.gap      { background: rgba(107,114,128,0.15); border: 2px solid rgba(107,114,128,0.3); }
+    .tl-dot.first-bus{ background: rgba(79,142,247,0.15); border: 2px solid rgba(79,142,247,0.4); }
+    .tl-content { padding-bottom: 32px; }
+    .tl-time {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .tl-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .tl-title.danger { color: #ef4444; }
+    .tl-title.muted  { color: var(--text-dim); }
+    .tl-title.good   { color: var(--accent); }
+    .tl-desc {
+      font-size: 0.88rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    /* ── FEATURES ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 56px;
+    }
+    .feat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      transition: border-color 0.25s, transform 0.25s;
+      cursor: default;
+    }
+    .feat-card:hover {
+      border-color: rgba(79,142,247,0.35);
+      transform: translateY(-4px);
+    }
+    .feat-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+    .feat-icon.blue   { background: rgba(79,142,247,0.15); }
+    .feat-icon.purple { background: rgba(139,92,246,0.15); }
+    .feat-icon.teal   { background: rgba(20,184,166,0.15); }
+    .feat-icon.amber  { background: rgba(245,158,11,0.15); }
+    .feat-icon.rose   { background: rgba(244,63,94,0.15); }
+    .feat-icon.green  { background: rgba(34,197,94,0.15); }
+    .feat-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .feat-desc {
+      font-size: 0.88rem;
+      color: var(--text-dim);
+      line-height: 1.65;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how-bg { background: var(--navy-mid); }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-top: 56px;
+      position: relative;
+    }
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 28px; left: 12.5%; right: 12.5%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--purple));
+    }
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 0 16px;
+      position: relative;
+    }
+    .step-num {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem;
+      font-weight: 900;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 0 0 6px var(--navy-mid);
+    }
+    .step-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .step-desc {
+      font-size: 0.83rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    /* ── APP PREVIEW ── */
+    .preview-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+      align-items: center;
+    }
+    .preview-text .section-sub { margin-bottom: 36px; }
+    .preview-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .preview-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-size: 0.92rem;
+      color: var(--text-dim);
+    }
+    .check {
+      width: 22px; height: 22px;
+      background: rgba(79,142,247,0.15);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem;
+      color: var(--accent);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .phone-mockup {
+      position: relative;
+      display: flex;
+      justify-content: center;
+    }
+    .phone {
+      width: 240px;
+      height: 480px;
+      background: linear-gradient(160deg, #1a2340, #0d1626);
+      border-radius: 36px;
+      border: 2px solid rgba(255,255,255,0.12);
+      padding: 24px 16px;
+      position: relative;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+    }
+    .phone::before {
+      content: '';
+      position: absolute;
+      top: 14px; left: 50%; transform: translateX(-50%);
+      width: 60px; height: 5px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 100px;
+    }
+    .phone-screen {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 12px;
+    }
+    .phone-header {
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+    .phone-title {
+      font-size: 1rem;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+    .phone-map {
+      flex: 1;
+      background: linear-gradient(135deg, rgba(20,30,50,0.9), rgba(10,14,26,0.95));
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .phone-map::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 30% 60%, rgba(79,142,247,0.08) 0%, transparent 50%),
+        radial-gradient(circle at 70% 30%, rgba(139,92,246,0.06) 0%, transparent 50%);
+    }
+    .map-dot {
+      position: absolute;
+      border-radius: 50%;
+    }
+    .map-dot.start {
+      width: 12px; height: 12px;
+      background: #22c55e;
+      box-shadow: 0 0 12px rgba(34,197,94,0.6);
+      top: 55%; left: 25%;
+    }
+    .map-dot.end {
+      width: 12px; height: 12px;
+      background: var(--accent);
+      box-shadow: 0 0 12px rgba(79,142,247,0.6);
+      top: 30%; left: 65%;
+    }
+    .map-dot.bus {
+      width: 18px; height: 18px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      border-radius: 4px;
+      transform: rotate(45deg);
+      top: 42%; left: 45%;
+      animation: moveBus 3s ease-in-out infinite alternate;
+    }
+    @keyframes moveBus {
+      from { top: 50%; left: 30%; }
+      to { top: 32%; left: 62%; }
+    }
+    .map-route {
+      position: absolute;
+      top: 30%; left: 25%;
+      width: 42%; height: 28%;
+      border: 1.5px dashed rgba(79,142,247,0.4);
+      border-bottom: none; border-left: none;
+      border-top-right-radius: 20px;
+    }
+    .phone-row {
+      display: flex;
+      gap: 8px;
+    }
+    .phone-tag {
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.65rem;
+      font-weight: 700;
+    }
+    .phone-tag.time {
+      background: rgba(79,142,247,0.15);
+      color: var(--accent);
+    }
+    .phone-tag.seats {
+      background: rgba(34,197,94,0.15);
+      color: #22c55e;
+    }
+    .phone-btn {
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+    .phone-glow {
+      position: absolute;
+      top: -40px; left: 50%; transform: translateX(-50%);
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(79,142,247,0.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ── ROUTES ── */
+    .routes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 48px;
+    }
+    .route-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .route-card:hover {
+      border-color: rgba(79,142,247,0.3);
+      transform: translateY(-2px);
+    }
+    .route-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .route-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+    .route-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 100px;
+      background: rgba(79,142,247,0.15);
+      color: var(--accent);
+    }
+    .route-stops {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .route-stop {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .route-stop::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--text-dim);
+      flex-shrink: 0;
+    }
+    .route-stop.major::before { background: var(--accent); }
+    .route-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+    .route-meta span { display: flex; align-items: center; gap: 4px; }
+
+    /* ── TESTIMONIALS ── */
+    .testi-bg { background: var(--navy-mid); }
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 48px;
+    }
+    .testi-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+    }
+    .testi-stars {
+      color: #f59e0b;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      margin-bottom: 14px;
+    }
+    .testi-text {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+    .testi-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .testi-avatar {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .testi-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+    .testi-role {
+      font-size: 0.76rem;
+      color: var(--text-dim);
+    }
+
+    /* ── CTA ── */
+    .cta-section {
+      padding: 120px 24px;
+      text-align: center;
+    }
+    .cta-inner {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .cta-glow {
+      position: absolute;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 600px; height: 400px;
+      background: radial-gradient(ellipse, rgba(79,142,247,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-inner h2 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+    .cta-inner p {
+      font-size: 1.05rem;
+      color: var(--text-dim);
+      margin-bottom: 48px;
+    }
+    .store-btns {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .store-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 24px;
+      text-decoration: none;
+      color: var(--text);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .store-btn:hover {
+      background: rgba(255,255,255,0.1);
+      transform: translateY(-2px);
+    }
+    .store-icon { font-size: 1.8rem; }
+    .store-label { font-size: 0.72rem; color: var(--text-dim); }
+    .store-name { font-size: 1.05rem; font-weight: 700; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .footer-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+    .footer-links a {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 16px 24px; }
+      nav ul { display: none; }
+
+      .problem-inner,
+      .preview-inner {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .routes-grid { grid-template-columns: 1fr; }
+      .testi-grid { grid-template-columns: 1fr; }
+
+      .steps {
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+      }
+      .steps::before { display: none; }
+      .step-num { box-shadow: none; }
+
+      footer {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 32px 24px;
+      }
+      .footer-links { flex-wrap: wrap; gap: 16px; }
+    }
+
+    @media (max-width: 560px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr; }
+      .stat { min-width: 50%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stars"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="logo">
+      <div class="logo-icon">🌙</div>
+      나이트버스
+    </a>
+    <ul>
+      <li><a href="#problem">서비스 소개</a></li>
+      <li><a href="#features">기능</a></li>
+      <li><a href="#how">이용 방법</a></li>
+      <li><a href="#routes">운행 노선</a></li>
+      <li><a href="#cta" class="nav-cta">앱 다운로드</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>
+      2026년 7월 전국 서비스 출시 예정
+    </div>
+    <h1>막차 이후에도<br /><span class="highlight">집에 갈 수 있습니다</span></h1>
+    <p>
+      심야 시간대 광역 대중교통 공백을 채우는 스마트 버스 서비스.<br />
+      앱 하나로 예약하고, 정류장에서 기다리면 됩니다.
+    </p>
+    <div class="hero-btns">
+      <a href="#cta" class="btn-primary">지금 사전 등록하기</a>
+      <a href="#how" class="btn-secondary">서비스 알아보기</a>
+    </div>
+
+    <div class="city-wrap">
+      <div class="city-glow"></div>
+      <svg class="city-svg" viewBox="0 0 860 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Sky gradient -->
+        <!-- Buildings -->
+        <rect x="30" y="80" width="60" height="140" rx="4" fill="#1a2540" stroke="rgba(79,142,247,0.15)" stroke-width="1"/>
+        <rect x="40" y="90" width="10" height="10" rx="1" fill="rgba(245,158,11,0.6)"/>
+        <rect x="56" y="90" width="10" height="10" rx="1" fill="rgba(79,142,247,0.5)"/>
+        <rect x="40" y="108" width="10" height="10" rx="1" fill="rgba(79,142,247,0.3)"/>
+        <rect x="56" y="108" width="10" height="10" rx="1" fill="rgba(245,158,11,0.4)"/>
+        <rect x="40" y="126" width="10" height="10" rx="1" fill="rgba(79,142,247,0.5)"/>
+
+        <rect x="100" y="40" width="80" height="180" rx="4" fill="#1e2d4a" stroke="rgba(79,142,247,0.2)" stroke-width="1"/>
+        <rect x="110" y="52" width="12" height="12" rx="1" fill="rgba(245,158,11,0.7)"/>
+        <rect x="128" y="52" width="12" height="12" rx="1" fill="rgba(79,142,247,0.6)"/>
+        <rect x="146" y="52" width="12" height="12" rx="1" fill="rgba(245,158,11,0.5)"/>
+        <rect x="110" y="72" width="12" height="12" rx="1" fill="rgba(79,142,247,0.4)"/>
+        <rect x="128" y="72" width="12" height="12" rx="1" fill="rgba(245,158,11,0.6)"/>
+        <rect x="146" y="72" width="12" height="12" rx="1" fill="rgba(79,142,247,0.3)"/>
+        <rect x="110" y="92" width="12" height="12" rx="1" fill="rgba(245,158,11,0.5)"/>
+        <rect x="146" y="92" width="12" height="12" rx="1" fill="rgba(79,142,247,0.4)"/>
+        <rect x="110" y="112" width="12" height="12" rx="1" fill="rgba(79,142,247,0.6)"/>
+        <rect x="128" y="112" width="12" height="12" rx="1" fill="rgba(245,158,11,0.4)"/>
+        <!-- Antenna -->
+        <line x1="140" y1="40" x2="140" y2="16" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+        <circle cx="140" cy="14" r="3" fill="rgba(239,68,68,0.8)"/>
+
+        <rect x="195" y="70" width="50" height="150" rx="4" fill="#162035" stroke="rgba(79,142,247,0.12)" stroke-width="1"/>
+        <rect x="204" y="80" width="9" height="9" rx="1" fill="rgba(79,142,247,0.4)"/>
+        <rect x="218" y="80" width="9" height="9" rx="1" fill="rgba(245,158,11,0.5)"/>
+        <rect x="204" y="96" width="9" height="9" rx="1" fill="rgba(245,158,11,0.3)"/>
+        <rect x="218" y="96" width="9" height="9" rx="1" fill="rgba(79,142,247,0.5)"/>
+
+        <rect x="260" y="20" width="100" height="200" rx="4" fill="#1e2d4a" stroke="rgba(79,142,247,0.25)" stroke-width="1"/>
+        <!-- lots of windows -->
+        <rect x="270" y="32" width="14" height="14" rx="1" fill="rgba(245,158,11,0.8)"/>
+        <rect x="290" y="32" width="14" height="14" rx="1" fill="rgba(79,142,247,0.6)"/>
+        <rect x="310" y="32" width="14" height="14" rx="1" fill="rgba(245,158,11,0.6)"/>
+        <rect x="330" y="32" width="14" height="14" rx="1" fill="rgba(79,142,247,0.5)"/>
+        <rect x="270" y="54" width="14" height="14" rx="1" fill="rgba(79,142,247,0.5)"/>
+        <rect x="290" y="54" width="14" height="14" rx="1" fill="rgba(245,158,11,0.7)"/>
+        <rect x="310" y="54" width="14" height="14" rx="1" fill="rgba(79,142,247,0.3)"/>
+        <rect x="330" y="54" width="14" height="14" rx="1" fill="rgba(245,158,11,0.5)"/>
+        <rect x="270" y="76" width="14" height="14" rx="1" fill="rgba(245,158,11,0.4)"/>
+        <rect x="290" y="76" width="14" height="14" rx="1" fill="rgba(79,142,247,0.4)"/>
+        <rect x="310" y="76" width="14" height="14" rx="1" fill="rgba(245,158,11,0.6)"/>
+        <rect x="330" y="76" width="14" height="14" rx="1" fill="rgba(79,142,247,0.5)"/>
+        <rect x="270" y="98" width="14" height="14" rx="1" fill="rgba(79,142,247,0.6)"/>
+        <rect x="310" y="98" width="14" height="14" rx="1" fill="rgba(245,158,11,0.5)"/>
+        <rect x="330" y="98" width="14" height="14" rx="1" fill="rgba(79,142,247,0.3)"/>
+        <line x1="310" y1="20" x2="310" y2="4" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+        <circle cx="310" cy="3" r="3" fill="rgba(239,68,68,0.9)"/>
+
+        <rect x="375" y="60" width="70" height="160" rx="4" fill="#162035" stroke="rgba(79,142,247,0.15)" stroke-width="1"/>
+        <rect x="385" y="72" width="11" height="11" rx="1" fill="rgba(245,158,11,0.6)"/>
+        <rect x="402" y="72" width="11" height="11" rx="1" fill="rgba(79,142,247,0.5)"/>
+        <rect x="420" y="72" width="11" height="11" rx="1" fill="rgba(245,158,11,0.4)"/>
+        <rect x="385" y="90" width="11" height="11" rx="1" fill="rgba(79,142,247,0.4)"/>
+        <rect x="402" y="90" width="11" height="11" rx="1" fill="rgba(245,158,11,0.6)"/>
+        <rect x="420" y="90" width="11" height="11" rx="1" fill="rgba(79,142,247,0.3)"/>
+
+        <rect x="460" y="90" width="55" height="130" rx="4" fill="#1a2540" stroke="rgba(79,142,247,0.1)" stroke-width="1"/>
+        <rect x="470" y="100" width="10" height="10" rx="1" fill="rgba(245,158,11,0.5)"/>
+        <rect x="486" y="100" width="10" height="10" rx="1" fill="rgba(79,142,247,0.4)"/>
+        <rect x="470" y="118" width="10" height="10" rx="1" fill="rgba(79,142,247,0.5)"/>
+        <rect x="486" y="118" width="10" height="10" rx="1" fill="rgba(245,158,11,0.4)"/>
+
+        <rect x="530" y="30" width="90" height="190" rx="4" fill="#1e2d4a" stroke="rgba(139,92,246,0.2)" stroke-width="1"/>
+        <rect x="540" y="42" width="13" height="13" rx="1" fill="rgba(139,92,246,0.6)"/>
+        <rect x="559" y="42" width="13" height="13" rx="1" fill="rgba(245,158,11,0.7)"/>
+        <rect x="578" y="42" width="13" height="13" rx="1" fill="rgba(139,92,246,0.4)"/>
+        <rect x="597" y="42" width="13" height="13" rx="1" fill="rgba(245,158,11,0.5)"/>
+        <rect x="540" y="63" width="13" height="13" rx="1" fill="rgba(245,158,11,0.5)"/>
+        <rect x="559" y="63" width="13" height="13" rx="1" fill="rgba(139,92,246,0.5)"/>
+        <rect x="578" y="63" width="13" height="13" rx="1" fill="rgba(245,158,11,0.6)"/>
+        <rect x="597" y="63" width="13" height="13" rx="1" fill="rgba(139,92,246,0.3)"/>
+        <rect x="540" y="84" width="13" height="13" rx="1" fill="rgba(139,92,246,0.4)"/>
+        <rect x="559" y="84" width="13" height="13" rx="1" fill="rgba(245,158,11,0.4)"/>
+        <rect x="578" y="84" width="13" height="13" rx="1" fill="rgba(139,92,246,0.6)"/>
+        <line x1="575" y1="30" x2="575" y2="8" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+        <circle cx="575" cy="6" r="3" fill="rgba(239,68,68,0.8)"/>
+
+        <rect x="635" y="75" width="60" height="145" rx="4" fill="#162035" stroke="rgba(79,142,247,0.12)" stroke-width="1"/>
+        <rect x="645" y="85" width="10" height="10" rx="1" fill="rgba(79,142,247,0.5)"/>
+        <rect x="661" y="85" width="10" height="10" rx="1" fill="rgba(245,158,11,0.5)"/>
+        <rect x="677" y="85" width="10" height="10" rx="1" fill="rgba(79,142,247,0.4)"/>
+        <rect x="645" y="103" width="10" height="10" rx="1" fill="rgba(245,158,11,0.4)"/>
+        <rect x="661" y="103" width="10" height="10" rx="1" fill="rgba(79,142,247,0.6)"/>
+        <rect x="677" y="103" width="10" height="10" rx="1" fill="rgba(245,158,11,0.3)"/>
+
+        <rect x="710" y="50" width="75" height="170" rx="4" fill="#1a2540" stroke="rgba(79,142,247,0.18)" stroke-width="1"/>
+        <rect x="720" y="62" width="12" height="12" rx="1" fill="rgba(245,158,11,0.7)"/>
+        <rect x="738" y="62" width="12" height="12" rx="1" fill="rgba(79,142,247,0.6)"/>
+        <rect x="756" y="62" width="12" height="12" rx="1" fill="rgba(245,158,11,0.5)"/>
+        <rect x="772" y="62" width="12" height="12" rx="1" fill="rgba(79,142,247,0.4)"/>
+        <rect x="720" y="82" width="12" height="12" rx="1" fill="rgba(79,142,247,0.4)"/>
+        <rect x="738" y="82" width="12" height="12" rx="1" fill="rgba(245,158,11,0.5)"/>
+        <rect x="756" y="82" width="12" height="12" rx="1" fill="rgba(79,142,247,0.6)"/>
+        <rect x="720" y="102" width="12" height="12" rx="1" fill="rgba(245,158,11,0.4)"/>
+        <rect x="738" y="102" width="12" height="12" rx="1" fill="rgba(79,142,247,0.3)"/>
+        <rect x="756" y="102" width="12" height="12" rx="1" fill="rgba(245,158,11,0.5)"/>
+
+        <rect x="800" y="85" width="55" height="135" rx="4" fill="#162035" stroke="rgba(79,142,247,0.1)" stroke-width="1"/>
+        <rect x="810" y="96" width="10" height="10" rx="1" fill="rgba(79,142,247,0.5)"/>
+        <rect x="826" y="96" width="10" height="10" rx="1" fill="rgba(245,158,11,0.4)"/>
+        <rect x="810" y="114" width="10" height="10" rx="1" fill="rgba(245,158,11,0.5)"/>
+        <rect x="826" y="114" width="10" height="10" rx="1" fill="rgba(79,142,247,0.3)"/>
+
+        <!-- Road -->
+        <rect x="0" y="200" width="860" height="20" fill="#0d1626"/>
+        <line x1="0" y1="210" x2="860" y2="210" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <!-- Center line dashes -->
+        <line x1="0" y1="210" x2="80" y2="210" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-dasharray="40 20"/>
+
+        <!-- Bus -->
+        <g transform="translate(360,187)">
+          <rect width="60" height="22" rx="4" fill="#4f8ef7"/>
+          <rect x="2" y="3" width="10" height="10" rx="1" fill="rgba(255,255,255,0.9)"/>
+          <rect x="16" y="3" width="10" height="10" rx="1" fill="rgba(255,255,255,0.9)"/>
+          <rect x="30" y="3" width="10" height="10" rx="1" fill="rgba(255,255,255,0.9)"/>
+          <rect x="44" y="3" width="10" height="10" rx="1" fill="rgba(255,255,255,0.9)"/>
+          <circle cx="10" cy="22" r="4" fill="#0a0e1a"/>
+          <circle cx="50" cy="22" r="4" fill="#0a0e1a"/>
+          <!-- headlights -->
+          <rect x="58" y="7" width="4" height="8" rx="1" fill="rgba(255,230,100,0.9)"/>
+        </g>
+      </svg>
+    </div>
+  </header>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">자정~5시</div>
+      <div class="stat-label">서비스 운행 시간대</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">30분</div>
+      <div class="stat-label">평균 배차 간격</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">50+</div>
+      <div class="stat-label">운행 예정 광역 노선</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3분</div>
+      <div class="stat-label">앱 예약 소요 시간</div>
+    </div>
+  </div>
+
+  <!-- PROBLEM -->
+  <div class="problem-bg" id="problem">
+    <div class="section">
+      <div class="problem-inner">
+        <div>
+          <div class="section-tag">문제 인식</div>
+          <h2 class="section-title">하루의 끝,<br />대중교통은 끊겼습니다</h2>
+          <p class="section-sub">
+            막차 이후부터 첫차 전까지, 매일 수백만 명이 귀갓길을 걱정합니다.
+            택시는 비싸고, 대리는 오래 걸리고, 밤새 기다릴 수도 없습니다.
+            나이트버스가 그 공백을 채웁니다.
+          </p>
+        </div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot last-bus">🚌</div>
+            <div class="tl-content">
+              <div class="tl-time">23:30 ~ 00:30</div>
+              <div class="tl-title danger">막차 운행 종료</div>
+              <div class="tl-desc">광역버스·지하철 막차가 끊기며 수도권 외곽 이동이 불가능해집니다.</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot gap">🌙</div>
+            <div class="tl-content">
+              <div class="tl-time">00:30 ~ 05:00</div>
+              <div class="tl-title muted">교통 공백 시간대</div>
+              <div class="tl-desc">택시 대기 1시간, 심야 요금 2~3배. 안전하고 저렴한 이동 수단이 없습니다.</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot first-bus">🌅</div>
+            <div class="tl-content">
+              <div class="tl-time">05:00 ~</div>
+              <div class="tl-title good">첫차 운행 시작</div>
+              <div class="tl-desc">하지만 그때까지 기다리기에는 너무 긴 시간입니다.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div id="features">
+    <div class="section">
+      <div class="section-tag">주요 기능</div>
+      <h2 class="section-title">심야 이동의 새로운 기준</h2>
+      <p class="section-sub">예약부터 탑승까지, 스마트폰 하나로 모든 것이 가능합니다.</p>
+
+      <div class="features-grid">
+        <div class="feat-card">
+          <div class="feat-icon blue">🗓️</div>
+          <div class="feat-title">간편 사전 예약</div>
+          <div class="feat-desc">앱에서 날짜, 노선, 좌석을 선택하면 끝. 3분 안에 예약이 완료됩니다. 당일 예약도 가능합니다.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon purple">📍</div>
+          <div class="feat-title">실시간 버스 위치</div>
+          <div class="feat-desc">버스의 현재 위치와 예상 도착 시간을 지도에서 실시간으로 확인하세요.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon teal">💺</div>
+          <div class="feat-title">지정 좌석제</div>
+          <div class="feat-desc">예약한 자리에 앉으면 됩니다. 입석 없이 편안하게 귀가할 수 있습니다.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon amber">🔔</div>
+          <div class="feat-title">하차 알림</div>
+          <div class="feat-desc">내릴 정류장이 가까워지면 자동으로 알림을 보내드립니다. 졸다가 지나칠 걱정 없습니다.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon rose">💳</div>
+          <div class="feat-title">간편 결제</div>
+          <div class="feat-desc">카드, 카카오페이, 네이버페이 등 다양한 결제 수단을 지원합니다. 정기권 구매도 가능합니다.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon green">🛡️</div>
+          <div class="feat-title">안전 귀가 확인</div>
+          <div class="feat-desc">탑승 정보를 가족·친구에게 공유하고, 도착 시 자동으로 알림을 전송합니다.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="how-bg" id="how">
+    <div class="section">
+      <div class="section-tag">이용 방법</div>
+      <h2 class="section-title">4단계로 집까지</h2>
+      <p class="section-sub">복잡한 절차 없이, 누구나 쉽게 이용할 수 있습니다.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-title">앱 설치 & 회원가입</div>
+          <div class="step-desc">iOS, 안드로이드 모두 지원. 전화번호 인증 하나로 가입 완료.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-title">노선 & 날짜 선택</div>
+          <div class="step-desc">출발지와 목적지를 입력하면 이용 가능한 심야 버스를 안내합니다.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-title">좌석 예약 & 결제</div>
+          <div class="step-desc">원하는 좌석을 선택하고 간편 결제로 예약을 확정합니다.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-title">정류장에서 탑승</div>
+          <div class="step-desc">QR 코드 한 번으로 탑승. 버스가 오면 편하게 앉아서 집까지.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APP PREVIEW -->
+  <div>
+    <div class="section">
+      <div class="preview-inner">
+        <div class="preview-text">
+          <div class="section-tag">앱 미리보기</div>
+          <h2 class="section-title">손 안의<br />심야 대중교통</h2>
+          <p class="section-sub">
+            직관적인 UI로 누구나 빠르게 버스를 예약하고, 내 위치와 버스 위치를 한눈에 파악하세요.
+          </p>
+          <ul class="preview-list">
+            <li>
+              <span class="check">✓</span>
+              실시간 지도에서 버스 위치와 이동 경로를 확인
+            </li>
+            <li>
+              <span class="check">✓</span>
+              탑승 전·후 알림으로 절대 놓치지 않는 버스
+            </li>
+            <li>
+              <span class="check">✓</span>
+              예약 내역, 결제 내역, 이동 기록 모두 앱에서 관리
+            </li>
+            <li>
+              <span class="check">✓</span>
+              안전 귀가 공유로 소중한 사람들의 걱정을 덜어주세요
+            </li>
+          </ul>
+        </div>
+        <div class="phone-mockup">
+          <div class="phone-glow"></div>
+          <div class="phone">
+            <div class="phone-screen">
+              <div class="phone-header">나이트버스</div>
+              <div class="phone-title">오늘 밤 귀가<br />어디로 가시나요?</div>
+              <div class="phone-map">
+                <div class="map-route"></div>
+                <div class="map-dot start"></div>
+                <div class="map-dot end"></div>
+                <div class="map-dot bus"></div>
+              </div>
+              <div class="phone-row">
+                <div class="phone-tag time">⏰ 00:45 출발</div>
+                <div class="phone-tag seats">💺 잔여 8석</div>
+              </div>
+              <div class="phone-btn">지금 예약하기 →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROUTES -->
+  <div class="problem-bg" id="routes">
+    <div class="section">
+      <div class="section-tag">운행 노선</div>
+      <h2 class="section-title">수도권 주요 구간을<br />촘촘하게 연결합니다</h2>
+      <p class="section-sub">출시 초기 50개 노선을 시작으로 지속적으로 확대할 예정입니다.</p>
+
+      <div class="routes-grid">
+        <div class="route-card">
+          <div class="route-header">
+            <div class="route-name">N1 강남 — 수원</div>
+            <div class="route-badge">운행 중</div>
+          </div>
+          <div class="route-stops">
+            <div class="route-stop major">강남역</div>
+            <div class="route-stop">양재역</div>
+            <div class="route-stop">판교</div>
+            <div class="route-stop">정자역</div>
+            <div class="route-stop major">수원역</div>
+          </div>
+          <div class="route-meta">
+            <span>🕐 약 55분</span>
+            <span>💺 45석</span>
+            <span>🔄 30분 간격</span>
+          </div>
+        </div>
+        <div class="route-card">
+          <div class="route-header">
+            <div class="route-name">N2 서울역 — 인천</div>
+            <div class="route-badge">운행 중</div>
+          </div>
+          <div class="route-stops">
+            <div class="route-stop major">서울역</div>
+            <div class="route-stop">신도림</div>
+            <div class="route-stop">부평역</div>
+            <div class="route-stop">부천</div>
+            <div class="route-stop major">인천터미널</div>
+          </div>
+          <div class="route-meta">
+            <span>🕐 약 65분</span>
+            <span>💺 45석</span>
+            <span>🔄 30분 간격</span>
+          </div>
+        </div>
+        <div class="route-card">
+          <div class="route-header">
+            <div class="route-name">N3 홍대 — 일산</div>
+            <div class="route-badge">운행 중</div>
+          </div>
+          <div class="route-stops">
+            <div class="route-stop major">홍대입구</div>
+            <div class="route-stop">수색</div>
+            <div class="route-stop">능곡</div>
+            <div class="route-stop">백석</div>
+            <div class="route-stop major">일산역</div>
+          </div>
+          <div class="route-meta">
+            <span>🕐 약 45분</span>
+            <span>💺 45석</span>
+            <span>🔄 30분 간격</span>
+          </div>
+        </div>
+        <div class="route-card">
+          <div class="route-header">
+            <div class="route-name">N4 강남 — 용인</div>
+            <div class="route-badge">출시 예정</div>
+          </div>
+          <div class="route-stops">
+            <div class="route-stop major">강남역</div>
+            <div class="route-stop">판교</div>
+            <div class="route-stop">기흥</div>
+            <div class="route-stop major">용인터미널</div>
+          </div>
+          <div class="route-meta">
+            <span>🕐 약 50분</span>
+            <span>💺 45석</span>
+            <span>🔄 40분 간격</span>
+          </div>
+        </div>
+        <div class="route-card">
+          <div class="route-header">
+            <div class="route-name">N5 여의도 — 안양</div>
+            <div class="route-badge">출시 예정</div>
+          </div>
+          <div class="route-stops">
+            <div class="route-stop major">여의도</div>
+            <div class="route-stop">구로</div>
+            <div class="route-stop">광명</div>
+            <div class="route-stop major">안양역</div>
+          </div>
+          <div class="route-meta">
+            <span>🕐 약 40분</span>
+            <span>💺 45석</span>
+            <span>🔄 30분 간격</span>
+          </div>
+        </div>
+        <div class="route-card">
+          <div class="route-header">
+            <div class="route-name">N6 잠실 — 하남</div>
+            <div class="route-badge">출시 예정</div>
+          </div>
+          <div class="route-stops">
+            <div class="route-stop major">잠실역</div>
+            <div class="route-stop">강동</div>
+            <div class="route-stop">미사</div>
+            <div class="route-stop major">하남터미널</div>
+          </div>
+          <div class="route-meta">
+            <span>🕐 약 35분</span>
+            <span>💺 45석</span>
+            <span>🔄 40분 간격</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TESTIMONIALS -->
+  <div class="testi-bg">
+    <div class="section">
+      <div class="section-tag">사용자 후기</div>
+      <h2 class="section-title">이미 경험한 사람들의 이야기</h2>
+      <div class="testi-grid">
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">
+            "퇴근 후 회식이 있으면 항상 택시비 걱정이었는데, 나이트버스 덕분에 부담 없이 늦게까지 즐길 수 있게 됐어요. 앱도 너무 직관적이에요."
+          </p>
+          <div class="testi-author">
+            <div class="testi-avatar" style="background:rgba(79,142,247,0.2);color:var(--accent)">김</div>
+            <div>
+              <div class="testi-name">김지현</div>
+              <div class="testi-role">직장인, 수원 거주</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">
+            "지정 좌석이라 자리 걱정 없이 편하게 탈 수 있고, 하차 알림 기능 덕분에 버스 안에서 조금 눈 붙여도 안심이에요."
+          </p>
+          <div class="testi-author">
+            <div class="testi-avatar" style="background:rgba(139,92,246,0.2);color:var(--purple)">박</div>
+            <div>
+              <div class="testi-name">박민준</div>
+              <div class="testi-role">대학원생, 인천 거주</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">
+            "딸이 늦게 귀가할 때마다 걱정이 많았는데, 안전 귀가 공유 기능으로 어느 버스 탔는지 실시간으로 볼 수 있어서 정말 안심돼요."
+          </p>
+          <div class="testi-author">
+            <div class="testi-avatar" style="background:rgba(20,184,166,0.2);color:var(--teal)">이</div>
+            <div>
+              <div class="testi-name">이정숙</div>
+              <div class="testi-role">학부모, 일산 거주</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section" id="cta">
+    <div class="cta-glow"></div>
+    <div class="cta-inner">
+      <div class="badge" style="margin-bottom:28px">
+        <span class="badge-dot"></span>
+        2026년 7월 출시 · 사전 등록 시 첫 달 무료
+      </div>
+      <h2>오늘 밤부터<br /><span style="background:linear-gradient(90deg,var(--accent),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">걱정 없이 귀가하세요</span></h2>
+      <p>지금 사전 등록하고 얼리버드 혜택을 받아보세요.<br />출시 알림을 가장 먼저 받을 수 있습니다.</p>
+      <div class="store-btns">
+        <a href="#" class="store-btn">
+          <span class="store-icon">🍎</span>
+          <div>
+            <div class="store-label">다운로드</div>
+            <div class="store-name">App Store</div>
+          </div>
+        </a>
+        <a href="#" class="store-btn">
+          <span class="store-icon">🤖</span>
+          <div>
+            <div class="store-label">다운로드</div>
+            <div class="store-name">Google Play</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <a href="#" class="footer-logo">
+      <div class="logo-icon">🌙</div>
+      나이트버스
+    </a>
+    <ul class="footer-links">
+      <li><a href="#">서비스 소개</a></li>
+      <li><a href="#">노선 안내</a></li>
+      <li><a href="#">이용 약관</a></li>
+      <li><a href="#">개인정보처리방침</a></li>
+      <li><a href="#">고객센터</a></li>
+    </ul>
+    <div class="footer-copy">© 2026 나이트버스. All rights reserved.</div>
+  </footer>
+
+  <script>
+    // Smooth scroll for nav links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Nav scroll effect
+    window.addEventListener('scroll', () => {
+      const nav = document.querySelector('nav');
+      nav.style.background = window.scrollY > 50
+        ? 'rgba(10,14,26,0.97)'
+        : 'rgba(10,14,26,0.85)';
+    });
+
+    // Fade-in on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.feat-card, .route-card, .testi-card, .step').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(24px)';
+      el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>
