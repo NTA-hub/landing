@@ -3,7 +3,75 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NTA — 새벽에도 집에 갑니다</title>
+  <title>NTA — 새벽에도 집에 갑니다 | 심야 광역버스 (홍대 ↔ 일산)</title>
+  
+  <!-- SEO 메타 태그 -->
+  <meta name="description" content="자정부터 새벽 4시까지, 홍대에서 일산까지 7,000원 고정 요금으로 안전하게 귀가하세요. 심야 이동의 공백을 채우는 NTA.">
+  <meta name="keywords" content="NTA, 심야버스, 심야광역버스, 홍대일산, 막차, 심야교통, 서울심야버스, 경기도심야버스, 홍대막차, 일산막차, 심야귀가, 야간버스">
+  <meta name="author" content="NTA (Night Time Arrival)">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://nighttimearrival.com">
+
+  <!-- Open Graph / Kakao / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://nighttimearrival.com">
+  <meta property="og:site_name" content="NTA — Night Time Arrival">
+  <meta property="og:title" content="NTA — 새벽에도 집에 갑니다 | 심야 광역버스">
+  <meta property="og:description" content="홍대에서 일산까지 7,000원 고정 요금. 자정부터 새벽 4시까지 운행하는 심야 광역버스 NTA">
+  <meta property="og:image" content="https://nighttimearrival.com/images/prob-1-1440.png">
+  <meta property="og:locale" content="ko_KR">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://nighttimearrival.com">
+  <meta name="twitter:title" content="NTA — 새벽에도 집에 갑니다 | 심야 광역버스">
+  <meta name="twitter:description" content="홍대에서 일산까지 7,000원 고정 요금. 자정부터 새벽 4시까지 운행하는 심야 광역버스 NTA">
+  <meta name="twitter:image" content="https://nighttimearrival.com/images/prob-1-1440.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="logo.png">
+
+  <!-- 구조화 데이터 (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://nighttimearrival.com/#website",
+        "url": "https://nighttimearrival.com",
+        "name": "NTA (Night Time Arrival)",
+        "description": "새벽에도 집에 갑니다 — 홍대 ↔ 일산 심야 광역버스 서비스",
+        "inLanguage": "ko-KR"
+      },
+      {
+        "@type": "Service",
+        "@id": "https://nighttimearrival.com/#service",
+        "name": "NTA 심야 광역버스",
+        "serviceType": "심야 대중교통 / 광역버스",
+        "provider": {
+          "@type": "Organization",
+          "name": "NTA",
+          "url": "https://nighttimearrival.com"
+        },
+        "areaServed": [
+          { "@type": "City", "name": "서울 (홍대)" },
+          { "@type": "City", "name": "경기도 (일산)" }
+        ],
+        "offers": {
+          "@type": "Offer",
+          "price": "7000",
+          "priceCurrency": "KRW",
+          "description": "거리 무관 7,000원 고정 단일 요금"
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- 웹폰트: Spoqa Han Sans Neo (로컬 파일 없을 시 웹폰트 CDN 적용) -->
+  <link rel="stylesheet" href="https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css">
+
   <style>
     @font-face {
       font-family: 'Spoqa Han Sans Neo';
@@ -639,6 +707,127 @@
 
       .foot-text { font-size: 13px; line-height: 1.7; }
     }
+
+    /* ── COMING SOON MODAL ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(10, 11, 13, 0.82);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+      transition: opacity 0.28s ease, visibility 0.28s ease;
+    }
+    .modal-overlay.is-active {
+      opacity: 1;
+      pointer-events: auto;
+      visibility: visible;
+    }
+    .modal-box {
+      position: relative;
+      background: var(--bg1);
+      border: 1px solid var(--g850);
+      border-radius: 20px;
+      padding: 40px 32px 32px;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), 0 0 40px rgba(255, 245, 0, 0.08);
+      transform: scale(0.92) translateY(10px);
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .modal-overlay.is-active .modal-box {
+      transform: scale(1) translateY(0);
+    }
+    .modal-close-icon {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 36px;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--g400);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      transition: all 0.2s;
+    }
+    .modal-close-icon:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+    .modal-icon-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 58px;
+      height: 58px;
+      border-radius: 16px;
+      background: rgba(255, 245, 0, 0.12);
+      border: 1px solid rgba(255, 245, 0, 0.3);
+      color: var(--y);
+      font-size: 26px;
+      margin-bottom: 20px;
+    }
+    .modal-tag {
+      display: inline-block;
+      background: rgba(255, 245, 0, 0.15);
+      color: var(--y);
+      border: 1px solid rgba(255, 245, 0, 0.35);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 12px;
+      margin-bottom: 12px;
+      letter-spacing: 0.04em;
+    }
+    .modal-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--g100);
+      margin-bottom: 12px;
+      line-height: 1.35;
+    }
+    .modal-platform-info {
+      font-size: 14px;
+      color: var(--y);
+      font-weight: 500;
+      margin-bottom: 14px;
+    }
+    .modal-desc {
+      font-size: 15px;
+      color: var(--g400);
+      line-height: 1.65;
+      margin-bottom: 28px;
+      word-break: keep-all;
+    }
+    .modal-btn-confirm {
+      width: 100%;
+      background: var(--y);
+      color: var(--bg0);
+      font-weight: 700;
+      font-size: 17px;
+      padding: 15px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .modal-btn-confirm:hover {
+      opacity: 0.88;
+    }
   </style>
 </head>
 <body>
@@ -916,13 +1105,13 @@
       새벽 4시까지, 15~20분 간격으로 운행합니다.
     </p>
     <div class="dl-buttons">
-      <a href="#" class="dl-btn" onclick="return false;">
+      <a href="#download" class="dl-btn btn-download-platform" data-platform="iOS (App Store)">
         <div class="dl-btn-text">
           <span class="dl-btn-sub">Download on the</span>
           <span class="dl-btn-name">App Store</span>
         </div>
       </a>
-      <a href="#" class="dl-btn" onclick="return false;">
+      <a href="#download" class="dl-btn btn-download-platform" data-platform="Android (Google Play)">
         <div class="dl-btn-text">
           <span class="dl-btn-sub">Get it on</span>
           <span class="dl-btn-name">Google Play</span>
@@ -931,6 +1120,23 @@
     </div>
   </div>
 </section>
+
+<!-- COMING SOON MODAL -->
+<div class="modal-overlay" id="launch-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-box">
+    <button class="modal-close-icon" id="modal-close-btn" aria-label="닫기">✕</button>
+    <div class="modal-icon-badge">🚌</div>
+    <div><span class="modal-tag">COMING SOON</span></div>
+    <h3 class="modal-title" id="modal-title">앱 출시 준비 중입니다</h3>
+    <div class="modal-platform-info" id="modal-platform-target">iOS & Android</div>
+    <p class="modal-desc">
+      더 안전하고 쾌적한 심야 귀가 서비스를 제공하기 위해<br>
+      현재 앱 스토어 출시 최종 검수를 진행하고 있습니다.<br>
+      빠른 시일 내에 찾아뵙겠습니다!
+    </p>
+    <button class="modal-btn-confirm" id="modal-confirm-btn">확인</button>
+  </div>
+</div>
 
 <!-- FOOTER -->
 <footer>
@@ -992,6 +1198,66 @@
     }, 420);
 
   }, 2000);
+
+  /* ── 앱 다운로드 버튼 클릭 시 하단으로 부드러운 스크롤 이동 ── */
+  document.querySelectorAll('a[href="#download"]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      // 플랫폼 별 다운로드 버튼인 경우 스크롤은 브라우저 기본 hash 이동을 방지하고 모달만 띄움
+      if (btn.classList.contains('btn-download-platform')) {
+        e.preventDefault();
+        return;
+      }
+      e.preventDefault();
+      const target = document.getElementById('download');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  /* ── 앱 출시 준비 중 모달 로직 ── */
+  const modal = document.getElementById('launch-modal');
+  const platformTarget = document.getElementById('modal-platform-target');
+  const closeBtn = document.getElementById('modal-close-btn');
+  const confirmBtn = document.getElementById('modal-confirm-btn');
+
+  function openModal(platform) {
+    if (platformTarget && platform) {
+      platformTarget.textContent = `${platform} 앱 준비 중`;
+    }
+    modal.classList.add('is-active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.classList.remove('is-active');
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('.btn-download-platform').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const platform = btn.getAttribute('data-platform') || '스토어';
+      openModal(platform);
+    });
+  });
+
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (confirmBtn) confirmBtn.addEventListener('click', closeModal);
+
+  // 배경(오버레이) 클릭 시 닫기
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  // ESC 키 누를 시 닫기
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('is-active')) {
+      closeModal();
+    }
+  });
 </script>
 </body>
 </html>
