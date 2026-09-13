@@ -706,7 +706,16 @@
       .dl-btn-name { font-size: 15px; }
 
       .foot-text { font-size: 13px; line-height: 1.7; }
+
+      .br-mo { display: inline; }
+      .br-pc { display: none; }
+      .modal-box { padding: 32px 20px 24px; border-radius: 16px; }
+      .modal-title { font-size: 20px; }
+      .modal-desc { font-size: 14px; line-height: 1.65; margin-bottom: 22px; }
     }
+
+    .br-mo { display: none; }
+    .br-pc { display: inline; }
 
     /* ── COMING SOON MODAL ── */
     .modal-overlay {
@@ -828,13 +837,27 @@
     .modal-btn-confirm:hover {
       opacity: 0.88;
     }
+
+    /* ── LOGO LINKS ── */
+    .logo-link, .foot-logo-link {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .logo-link:hover, .foot-logo-link:hover {
+      opacity: 0.8;
+    }
   </style>
 </head>
 <body>
 
 <!-- NAV -->
 <nav>
-  <img class="logo" src="logo.svg" alt="NTA">
+  <a href="#top" class="logo-link" aria-label="홈 맨 위로 이동">
+    <img class="logo" src="logo.svg" alt="NTA">
+  </a>
   <a href="#download" class="nav-btn">
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v10M4 7l4 4 4-4M2 13h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
     앱 다운로드
@@ -1130,8 +1153,8 @@
     <h3 class="modal-title" id="modal-title">앱 출시 준비 중입니다</h3>
     <div class="modal-platform-info" id="modal-platform-target">iOS & Android</div>
     <p class="modal-desc">
-      더 안전하고 쾌적한 심야 귀가 서비스를 제공하기 위해<br>
-      현재 앱 스토어 출시 최종 검수를 진행하고 있습니다.<br>
+      더 안전하고 쾌적한<br class="br-mo"> 심야 귀가 서비스를 위해<br class="br-pc">
+      현재 정식 출시를<br class="br-mo"> 열심히 준비하고 있습니다.<br><br>
       빠른 시일 내에 찾아뵙겠습니다!
     </p>
     <button class="modal-btn-confirm" id="modal-confirm-btn">확인</button>
@@ -1140,7 +1163,9 @@
 
 <!-- FOOTER -->
 <footer>
-  <img class="foot-logo" src="logo.svg" alt="NTA">
+  <a href="#top" class="foot-logo-link" aria-label="홈 맨 위로 이동">
+    <img class="foot-logo" src="logo.svg" alt="NTA">
+  </a>
   <p class="foot-text">
     Night Time Arrival<br>
     © 2026 NTA. All rights reserved.
@@ -1257,6 +1282,14 @@
     if (e.key === 'Escape' && modal.classList.contains('is-active')) {
       closeModal();
     }
+  });
+
+  /* ── 로고 클릭 시 맨 위로 부드럽게 이동 ── */
+  document.querySelectorAll('a[href="#top"]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   });
 </script>
 </body>
