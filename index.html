@@ -646,11 +646,35 @@
     /* ── FOOTER ── */
     footer {
       background: var(--bg2);
-      padding: 40px 48px;
-      text-align: center;
+      padding: 56px 48px;
     }
-    .foot-logo { height: 22px; width: auto; margin: 0 auto 12px; display: block; }
-    .foot-text { font-size: 20px; color: var(--g700); line-height: 1.8; }
+    .foot-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 28px;
+    }
+    .foot-logo { height: 22px; width: auto; display: block; }
+    .foot-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px 80px;
+    }
+    .foot-text {
+      width: 336px;
+      font-size: 16px;
+      font-style: normal;
+      color: var(--g700);
+      line-height: 1.8;
+      letter-spacing: -0.02em;
+      overflow-wrap: anywhere;
+    }
+    .foot-text a { color: inherit; text-decoration: none; transition: color .2s; }
+    .foot-text a:hover { color: var(--g400); }
+    .foot-divider { width: 100%; height: 1px; border: 0; background: #3A3D45; }
+    .foot-copy { font-size: 16px; color: var(--g700); line-height: 1.8; letter-spacing: -0.02em; }
 
     /* ── TABLET (≤880px) ── */
     @media (max-width: 880px) {
@@ -665,7 +689,7 @@
       section { padding: 64px 20px; }
       .hero { padding: 110px 20px 72px; }
       .s-cta { padding: 80px 20px; }
-      footer { padding: 32px 20px; }
+      footer { padding: 40px 20px; }
 
       h1 { font-size: clamp(28px, 8vw, 48px); }
       .hero-sub { font-size: 15px; line-height: 1.75; }
@@ -712,7 +736,9 @@
       .dl-btn-sub  { font-size: 12px; }
       .dl-btn-name { font-size: 15px; }
 
-      .foot-text { font-size: 13px; line-height: 1.7; }
+      .foot-inner { gap: 20px; }
+      .foot-info { width: 100%; flex-direction: column; gap: 20px; }
+      .foot-text, .foot-copy { width: 100%; font-size: 13px; line-height: 1.7; }
 
       .br-mo { display: inline; }
       .br-pc { display: none; }
@@ -891,12 +917,6 @@
         <span class="vs-taxi">30,000원</span>
         <span class="vs-badge">75% 절약</span>
       </div>
-    </div>
-    <div class="hero-actions">
-      <a href="#download" class="btn-primary">
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 1v12M5 9l4 4 4-4M2 15h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        앱 다운로드
-      </a>
     </div>
   </div>
 </section>
@@ -1170,13 +1190,25 @@
 
 <!-- FOOTER -->
 <footer>
-  <a href="#top" class="foot-logo-link" aria-label="홈 맨 위로 이동">
-    <img class="foot-logo" src="logo.svg" alt="NTA">
-  </a>
-  <p class="foot-text">
-    Night Time Arrival<br>
-    © 2026 NTA. All rights reserved.
-  </p>
+  <div class="foot-inner">
+    <a href="#top" class="foot-logo-link" aria-label="홈 맨 위로 이동">
+      <img class="foot-logo" src="logo.svg" alt="NTA">
+    </a>
+    <div class="foot-info">
+      <p class="foot-text">
+        명지산업주식회사<br>
+        대표 : 신지원<br>
+        사업자등록번호 : 127-86-19695<br>
+        주소 : 경기도 파주시 교하로 1358(교하동)
+      </p>
+      <address class="foot-text">
+        고객센터 전화 : <a href="tel:07087870244">070-8787-0244</a><br>
+        고객센터 이메일 : <a href="mailto:help@nighttimearrival.com">help@nighttimearrival.com</a>
+      </address>
+    </div>
+    <hr class="foot-divider">
+    <p class="foot-copy">© 2026 NTA by 명지산업주식회사</p>
+  </div>
 </footer>
 
 <script>
